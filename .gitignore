@@ -1,0 +1,13 @@
+# Node
+node_modules/
+npm-debug.log
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+client/build/
