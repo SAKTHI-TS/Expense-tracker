@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Navbar from './components/Navbar';
 import './App.css';
 
+
 axios.defaults.baseURL = 'http://localhost:5000/api';
 
 function App() {
@@ -81,6 +82,7 @@ function App() {
             )
           }
         />
+      
       </Routes>
     </div>
   );
