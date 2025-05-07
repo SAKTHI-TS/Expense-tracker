@@ -1,15 +1,13 @@
 const mongoose = require('mongoose');
 
-const expenseSchema = new mongoose.Schema({
+const ExpenseSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: 'users'
   },
   title: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   amount: {
     type: Number,
@@ -17,17 +15,20 @@ const expenseSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   description: {
-    type: String,
-    trim: true
+    type: String
   },
   date: {
-    type: Date,
-    default: Date.now
+    type: String,  // Changed to String type to prevent Date conversion
+    required: true,
+    get: v => v,
+    set: v => v
   }
+}, {
+  timestamps: false,  // Disable automatic timestamps
+  toJSON: { getters: true }
 });
 
-module.exports = mongoose.model('Expense', expenseSchema);
+module.exports = mongoose.model('expense', ExpenseSchema);

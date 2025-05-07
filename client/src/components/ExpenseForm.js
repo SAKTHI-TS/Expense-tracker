@@ -5,10 +5,11 @@ const ExpenseForm = ({ addExpense }) => {
     title: '',
     amount: '',
     category: '',
-    description: ''
+    description: '',
+    date: new Date().toISOString().split('T')[0] // Initialize with current date
   });
 
-  const { title, amount, category, description } = formData;
+  const { title, amount, category, description, date } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,17 +20,24 @@ const ExpenseForm = ({ addExpense }) => {
       alert('Please fill in all required fields');
       return;
     }
-    addExpense({
+
+    const expenseData = {
       title,
       amount: parseFloat(amount),
       category,
-      description
-    });
+      description,
+      date // Keep the date in YYYY-MM-DD format
+    };
+
+    console.log('Sending date:', date);
+    addExpense(expenseData);
+
     setFormData({
       title: '',
       amount: '',
       category: '',
-      description: ''
+      description: '',
+      date
     });
   };
 
@@ -37,6 +45,16 @@ const ExpenseForm = ({ addExpense }) => {
     <div className="expense-form">
       <h2>Add New Expense</h2>
       <form onSubmit={onSubmit}>
+        <div className="form-group">
+          <label>Date</label>
+          <input
+            type="date"
+            name="date"
+            value={date}
+            onChange={onChange}
+            max={new Date().toISOString().split('T')[0]} // Prevent future dates
+          />
+        </div>
         <div className="form-group">
           <label>Title*</label>
           <input

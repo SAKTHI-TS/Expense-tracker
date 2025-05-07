@@ -18,21 +18,25 @@ router.get('/', auth, async (req, res) => {
 // @route   POST api/expenses
 // @desc    Add a new expense
 router.post('/', auth, async (req, res) => {
-  const { title, amount, category, description } = req.body;
+  const { title, amount, category, description, date } = req.body;
 
   try {
+    // Create expense without any date conversion
     const newExpense = new Expense({
       title,
       amount,
       category,
       description,
+      date: date, // Date will remain as string
       user: req.user.id
     });
 
+    // Save and return the exact object
     const expense = await newExpense.save();
-    res.json(expense);
+    const savedExpense = await Expense.findById(expense._id).lean();
+    res.json(savedExpense);
   } catch (err) {
-    console.error(err.message);
+    console.error('Error:', err.message);
     res.status(500).send('Server error');
   }
 });
