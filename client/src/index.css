@@ -6,6 +6,14 @@
     --success-color: #2ecc71;
     --light-color: #ecf0f1;
     --dark-color: #2c3e50;
+    --gradient-primary: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+    --gradient-secondary: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    --gradient-danger: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    --gradient-dark: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
   }
   
   * {
@@ -17,8 +25,38 @@
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    background-color: #f5f5f5;
+    background: 
+      linear-gradient(120deg, rgba(176, 234, 255, 0.2), rgba(166, 255, 237, 0.2)),
+      radial-gradient(circle at top right, rgba(255, 208, 242, 0.3), transparent 70%),
+      radial-gradient(circle at bottom left, rgba(204, 255, 229, 0.3), transparent 70%),
+      linear-gradient(180deg, #ffffff, #f0f8ff);
+    background-size: 200% 200%, 100% 100%, 100% 100%, 100% 100%;
+    animation: 
+      gradientBG 15s ease infinite,
+      breathe 8s ease-in-out infinite;
+    min-height: 100vh;
     color: #333;
+  }
+
+  @keyframes gradientBG {
+    0% {
+      background-position: 0% 50%, 0% 0%, 0% 0%, 0% 0%;
+    }
+    50% {
+      background-position: 100% 50%, 0% 0%, 0% 0%, 0% 0%;
+    }
+    100% {
+      background-position: 0% 50%, 0% 0%, 0% 0%, 0% 0%;
+    }
+  }
+
+  @keyframes breathe {
+    0%, 100% {
+      background-size: 200% 200%, 120% 120%, 120% 120%, 100% 100%;
+    }
+    50% {
+      background-size: 200% 200%, 140% 140%, 140% 140%, 100% 100%;
+    }
   }
   
   #root {
@@ -41,6 +79,26 @@
     cursor: pointer;
     font-size: 1rem;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: -1;
+  }
+  
+  .btn:hover::before {
+    transform: translateX(0);
   }
   
   .btn-primary {
@@ -63,7 +121,20 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     margin-bottom: 10px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(to right, #3498db, #2ecc71) border-box;
   }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    animation: glowingBorder 2s infinite;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+  }
+  
   /* Edit Form Styles */
 .edit-form {
   background-color: #f9f9f9;
@@ -136,6 +207,7 @@
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
+  animation: modalFadeIn 0.3s ease-out;
 }
 
 .modal-overlay {
@@ -146,6 +218,7 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
+  animation: overlayFadeIn 0.3s ease-out;
 }
 
 .modal-header {
@@ -223,6 +296,12 @@
   padding: 20px;
   background: #f5f5f5;
   border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.filters:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .search-filter input {
@@ -286,6 +365,15 @@
   font-weight: 600;
 }
 
+.expenses-table tr {
+  transition: all 0.3s ease;
+}
+
+.expenses-table tr:hover {
+  background-color: rgba(52, 152, 219, 0.05);
+  transform: scale(1.01);
+}
+
 .no-results {
   text-align: center;
   padding: 20px;
@@ -326,16 +414,39 @@
 }
 
 .expense-card {
-  background: white;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transform-style: preserve-3d;
+  perspective: 1000px;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.expense-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .expense-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-5px) rotateX(5deg);
+  box-shadow: var(--shadow-xl);
+}
+
+.expense-card:hover::after {
+  opacity: 1;
 }
 
 .expense-title {
@@ -366,11 +477,27 @@
   background-color: #e74c3c;
   border-radius: 50%;
   margin-bottom: 2px;
+  transition: transform 0.3s ease;
 }
 
 .day-total {
   font-size: 10px;
   color: #e74c3c;
+}
+
+.react-calendar__tile {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.react-calendar__tile:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+  transform: scale(1.1);
+}
+
+.react-calendar__tile:hover .expense-dot {
+  transform: scale(1.2);
 }
 
 /* Modal Styles */
@@ -424,4 +551,54 @@
   .react-calendar {
     width: 100%;
   }
+}
+
+/* Modal Animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Loading State Animation */
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.loading-state {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes floatAnimation {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.dashboard-stats {
+  animation: floatAnimation 5s ease-in-out infinite;
+}
+
+@keyframes glowingBorder {
+  0%, 100% { border-color: rgba(99, 102, 241, 0.5); }
+  50% { border-color: rgba(79, 70, 229, 0.8); }
+}
+
+/* Add this new style for glass effect on components */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
